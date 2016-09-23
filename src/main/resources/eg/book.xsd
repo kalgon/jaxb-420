@@ -1,0 +1,9 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:eg" xmlns:tns="urn:eg">
+	<xs:element name="Book">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="isbn" type="tns:ISBN" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>
