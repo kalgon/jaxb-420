@@ -35,7 +35,7 @@ public class JAXB420Test {
 	public void simpleTest() {
 		for (int i = 0; i < 100; i++) {
 			SchemaCompiler sc = XJC.createSchemaCompiler();
-			String suffix = Integer.toString(i);
+			final String suffix = Integer.toString(i);
 			sc.setEntityResolver(new EntityResolver() {
 
 				public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
