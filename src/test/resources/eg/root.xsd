@@ -1,0 +1,6 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:eg">
+	<xs:include schemaLocation="common.xsd" />
+	<xs:annotation>
+		<xs:documentation>blah blah blah!</xs:documentation>
+	</xs:annotation>
+</xs:schema>

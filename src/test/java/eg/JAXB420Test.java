@@ -3,6 +3,8 @@ package eg;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.xml.namespace.QName;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -11,14 +13,12 @@ import org.junit.runners.Parameterized.Parameters;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 
-import com.sun.tools.xjc.api.Mapping;
-import com.sun.tools.xjc.api.Property;
 import com.sun.tools.xjc.api.SchemaCompiler;
 import com.sun.tools.xjc.api.XJC;
 
 /**
  * This test will try to create the same model over and over until it fails.
- * Each time, schemas'systemId are appended with some random suffix (and
+ * Each time, schemas'systemId are prepended with some random prefix (and
  * resolved via a custom EntityResolver) so that they may appear in a different
  * order in
  * {@linkplain com.sun.tools.xjc.reader.internalizer.DOMForest#getOneDocument()}.
@@ -29,25 +29,25 @@ import com.sun.tools.xjc.api.XJC;
 @RunWith(Parameterized.class)
 public class JAXB420Test {
 
-	@Parameters(name = "suffix: {0}")
-	public static List<String> suffices() {
-		return Arrays.asList("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "a", "aa", "ab", "ba", "az", "za1", "46546131", "kjhkjh");
+	@Parameters(name = "prefix: ''{0}''")
+	public static List<String> prefixes() {
+		return Arrays.asList("", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "a", "aa", "ab", "ba", "az", "za1", "45ab", "bz4z", "46546131", "kjhkjh");
 	}
 
-	private final String suffix;
+	private final String prefix;
 
-	public JAXB420Test(String suffix) {
-		this.suffix = suffix;
+	public JAXB420Test(String prefix) {
+		this.prefix = prefix;
 	}
 
 	private InputSource inputSource(String resourceName) {
 		InputSource result = new InputSource(getClass().getResourceAsStream(resourceName));
-		result.setSystemId(resourceName + this.suffix); // add the suffix to the systemId
+		result.setSystemId(this.prefix + resourceName); // prepend systemId with prefix
 		return result;
 	}
 
 	@Test
-	public void propertyTypeShouldBeCustomizedThroughGlobalBindings() {
+	public void customJavaTypeShouldHaveBeenRegistered() {
 		SchemaCompiler sc = XJC.createSchemaCompiler();
 		sc.setEntityResolver(new EntityResolver() {
 
@@ -56,11 +56,7 @@ public class JAXB420Test {
 			}
 		});
 		sc.parseSchema(inputSource("bindings.xjb"));
-		sc.parseSchema(inputSource("book.xsd"));
-		for (Mapping mapping : sc.bind().getMappings()) {
-			for (Property property : mapping.getWrapperStyleDrilldown()) {
-				Assert.assertEquals("eg.Isbn", property.type().fullName());
-			}
-		}
+		sc.parseSchema(inputSource("root.xsd"));
+		Assert.assertEquals("eg.MyCustomType", sc.bind().getJavaType(new QName("urn:eg", "MyCustomType")).getTypeClass().fullName());
 	}
 }

@@ -1,5 +1,5 @@
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:book">
-	<xs:simpleType name="ISBN">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:eg">
+	<xs:simpleType name="MyCustomType">
 		<xs:restriction base="xs:string" />
 	</xs:simpleType>
 </xs:schema>
