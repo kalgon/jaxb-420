@@ -18,7 +18,7 @@ import com.sun.tools.xjc.api.XJC;
 
 /**
  * This test will try to create the same model over and over until it fails.
- * Each time, schemas'systemId are appended with the iteration number (and
+ * Each time, schemas'systemId are appended with some random suffix (and
  * resolved via a custom EntityResolver) so that they may appear in a different
  * order in
  * {@linkplain com.sun.tools.xjc.reader.internalizer.DOMForest#getOneDocument()}.
@@ -42,7 +42,7 @@ public class JAXB420Test {
 
 	private InputSource inputSource(String resourceName) {
 		InputSource result = new InputSource(getClass().getResourceAsStream(resourceName));
-		result.setSystemId(resourceName + this.suffix);
+		result.setSystemId(resourceName + this.suffix); // add the suffix to the systemId
 		return result;
 	}
 
