@@ -1,12 +1,15 @@
 package eg;
 
-import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 import com.sun.tools.xjc.api.Mapping;
 import com.sun.tools.xjc.api.Property;
@@ -23,38 +26,40 @@ import com.sun.tools.xjc.api.XJC;
  * @author Xavier Dury
  * @see {@linkplain com.sun.tools.xjc.reader.internalizer.Internalizer#move()}
  */
+@RunWith(Parameterized.class)
 public class JAXB420Test {
 
-	private InputSource inputSource(String systemId, String resourceName) {
-		InputSource result = new InputSource(JAXB420Test.class.getResourceAsStream(resourceName));
-		result.setSystemId(systemId);
+	@Parameters(name = "suffix: {0}")
+	public static List<String> suffices() {
+		return Arrays.asList("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "a", "aa", "ab", "ba", "az", "za1", "46546131", "kjhkjh");
+	}
+
+	private final String suffix;
+
+	public JAXB420Test(String suffix) {
+		this.suffix = suffix;
+	}
+
+	private InputSource inputSource(String resourceName) {
+		InputSource result = new InputSource(getClass().getResourceAsStream(resourceName));
+		result.setSystemId(resourceName + this.suffix);
 		return result;
 	}
 
 	@Test
-	public void simpleTest() {
-		for (int i = 0; i < 100; i++) {
-			SchemaCompiler sc = XJC.createSchemaCompiler();
-			final String suffix = Integer.toString(i);
-			sc.setEntityResolver(new EntityResolver() {
+	public void propertyTypeShouldBeCustomizedThroughGlobalBindings() {
+		SchemaCompiler sc = XJC.createSchemaCompiler();
+		sc.setEntityResolver(new EntityResolver() {
 
-				public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
-					if (systemId.endsWith("common.xsd")) {
-						return inputSource(systemId + suffix, "common.xsd");
-					}
-					if (systemId.endsWith("book.xsd")) {
-						return inputSource(systemId + suffix, "book.xsd");
-					}
-					return null;
-				}
-			});
-			sc.parseSchema(inputSource("bindings.xjb" + suffix, "bindings.xjb"));
-			sc.parseSchema(inputSource("root.xsd" + suffix, "root.xsd"));
-			for (Mapping mapping : sc.bind().getMappings()) {
-				for (Property property : mapping.getWrapperStyleDrilldown()) {
-					System.out.println(property.type().fullName());
-					Assert.assertEquals("Test failed at iteration " + suffix, "eg.Isbn", property.type().fullName());
-				}
+			public InputSource resolveEntity(String publicId, String systemId) {
+				return inputSource("common.xsd");
+			}
+		});
+		sc.parseSchema(inputSource("bindings.xjb"));
+		sc.parseSchema(inputSource("book.xsd"));
+		for (Mapping mapping : sc.bind().getMappings()) {
+			for (Property property : mapping.getWrapperStyleDrilldown()) {
+				Assert.assertEquals("eg.Isbn", property.type().fullName());
 			}
 		}
 	}
