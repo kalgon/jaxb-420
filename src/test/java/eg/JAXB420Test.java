@@ -34,7 +34,6 @@ public class JAXB420Test {
 
 	@Parameters(name = "prefix: ''{0}''")
 	public static List<String> prefixes() {
-
 		return Arrays.asList("", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "a", "aa", "ab", "ba", "az", "za1", "45ab", "bz4z", "46546131", "kjhkjh");
 	}
 
@@ -50,6 +49,7 @@ public class JAXB420Test {
 		sc.setEntityResolver(new EntityResolver() {
 
 			public InputSource resolveEntity(String publicId, String systemId) {
+				// there is only one included schema
 				return inputSource("included.xsd");
 			}
 		});
@@ -60,7 +60,8 @@ public class JAXB420Test {
 
 	private InputSource inputSource(String resourceName) {
 		InputSource result = new InputSource(getClass().getResourceAsStream(resourceName));
-		result.setSystemId(prefix + resourceName); // prepend systemId with prefix
+		// prepend systemId with prefix
+		result.setSystemId(prefix + resourceName); 
 		return result;
 	}
 }
