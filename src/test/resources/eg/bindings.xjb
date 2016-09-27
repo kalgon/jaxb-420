@@ -1,5 +1,5 @@
-<jxb:bindings xmlns:eg="urn:eg" version="2.1" xmlns:jxb="http://java.sun.com/xml/ns/jaxb" xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc" jxb:extensionBindingPrefixes="xjc">
-	<jxb:globalBindings>
-		<xjc:javaType name="eg.MyCustomType" xmlType="eg:MyCustomType" adapter="eg.MyCustomTypeXmlAdapter" />
-	</jxb:globalBindings>
-</jxb:bindings>
+<bindings version="2.1" extensionBindingPrefixes="xjc" xmlns="http://java.sun.com/xml/ns/jaxb" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc">
+	<globalBindings>
+		<xjc:javaType name="java.time.LocalDate" xmlType="xs:date" adapter="eg.LocalDateXmlAdapter" />
+	</globalBindings>
+</bindings>
